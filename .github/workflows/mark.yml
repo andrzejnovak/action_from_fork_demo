@@ -1,9 +1,8 @@
-name: Mark
+name: 'bumpversion/label'
 
 on:
   pull_request:
     types: [labeled]
-  # push:
 
 env:
   IS_MAJOR: >-

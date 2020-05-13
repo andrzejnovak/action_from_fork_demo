@@ -1,5 +1,5 @@
 # https://github.com/nyurik/auto_pr_comments_from_forks
-name: Update PR comments
+name: Tag Stage/Release Cron
 
 on:
   # This number should correspond to the IGNORE_RUNS_OLDER_THAN value below.
@@ -9,29 +9,25 @@ on:
     branches:
     - master
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/2 * * * *'
 
 jobs:
   pr_updater:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Wait for artifact to be created
-      #   uses: jakejarvis/wait-action@master
-      #   with:
-      #     time: '20s'
       - name: Fetch artifact
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          WORKFLOW_NAME: "Mark"
+          WORKFLOW_NAME: "bumpversion/label"
           # the name of the artifact whose content comment published by PR. Must have a single markdown file inside.
           MSG_ARTIFACT_NAME: "message"
           # How far back to look for finished runs, in minutes.
           # Set to 10-20 minutes higher than cron's job frequency set above.
-          IGNORE_RUNS_OLDER_THAN: 200
+          IGNORE_RUNS_OLDER_THAN: 10
           # How far back to look for updated pull requests, in minutes.
           # Should be bigger than IGNORE_RUNS_OLDER_THAN by the maximum time a pull request jobs may take
-          IGNORE_PRS_OLDER_THAN: 200
+          IGNORE_PRS_OLDER_THAN: 60
         run: |
           #
           # Strategy:
