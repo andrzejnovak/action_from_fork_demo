@@ -1,4 +1,4 @@
-name: 'bumpversion/label'
+name: 'Parse label'
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ env:
   GITHUB_HEAD_REF: ${{ github.head_ref }}
 
 jobs:
-  bumpversion_artifact:
+  make_artifact:
     if: >-
       (
         contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) ||

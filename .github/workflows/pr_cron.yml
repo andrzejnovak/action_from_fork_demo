@@ -19,7 +19,7 @@ jobs:
       - name: Fetch artifact
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          WORKFLOW_NAME: "bumpversion/label"
+          WORKFLOW_NAME: "Parse label"
           # the name of the artifact whose content comment published by PR. Must have a single markdown file inside.
           MSG_ARTIFACT_NAME: "message"
           # How far back to look for finished runs, in minutes.
