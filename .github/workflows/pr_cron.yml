@@ -8,8 +8,10 @@ on:
   push:
     branches:
     - master
+  watch:
+    types: [started]
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'
 
 jobs:
   main:
