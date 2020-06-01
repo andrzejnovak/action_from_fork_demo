@@ -15,8 +15,8 @@ jobs:
       run: |
         array = ${{ github.event.pull_request.labels }}
         echo "${array[*]}"
-        
+
     - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
