@@ -24,9 +24,9 @@ jobs:
 
     steps:
       - name: Wait
-        uses: jakejarvis/wait-action@master
+        uses: juliangruber/sleep-action@v1
         with:
-          time: '10s'
+          time: 10s
       - name: Fetch artifact
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
