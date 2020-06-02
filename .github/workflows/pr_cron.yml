@@ -23,6 +23,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Wait
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '10s'
       - name: Fetch artifact
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
