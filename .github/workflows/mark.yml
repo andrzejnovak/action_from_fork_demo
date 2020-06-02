@@ -31,11 +31,6 @@ jobs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
-    - name: Milestone it
-      uses: iyu/actions-milestone@v1
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        configuration-path: .github/milestone.yml
     - name: Determine version part
       run: |
         if [ $IS_MAJOR == 'true' ]

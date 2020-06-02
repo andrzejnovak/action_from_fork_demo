@@ -23,10 +23,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Wait
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 10s
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Fetch artifact
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
