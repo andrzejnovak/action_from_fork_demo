@@ -13,12 +13,12 @@ jobs:
   main:
     runs-on: ubuntu-latest
     # Applicable if triggered by milestone
-    # if: >-
-    #   (
-    #     github.event.issue.milestone.creator.login == 'andrzejnovak'
-    #   ) && (
-    #     github.event.issue.milestone.title == 'GHA/trigger'
-    #   )
+    if: >-
+      (
+        github.event.issue.milestone.creator.login == 'andrzejnovak'
+      ) && (
+        github.event.issue.milestone.title == 'GHA/trigger'
+      )
     
     steps:
       - name: Dump GitHub context
