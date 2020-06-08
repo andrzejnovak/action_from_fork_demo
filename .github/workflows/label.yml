@@ -1,0 +1,13 @@
+name: labelrespond
+on:
+    issues:
+        types: labeled
+
+jobs:
+  issuelabel:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: get labels name
+        if: contains(github.event.label.name, 'bug' )
+        run: |
+          echo ${{ github.event.label.name }}
