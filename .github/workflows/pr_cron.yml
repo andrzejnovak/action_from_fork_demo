@@ -3,8 +3,8 @@ name: Tag Stage/Release
 
 on:
   issues:
-    #types: [milestoned]
-    types: [labeled]
+    types: [milestoned]
+    #types: [labeled]
 
   # schedule:
   #   - cron: '*/30 * * * *'
@@ -19,14 +19,7 @@ jobs:
     #   ) && (
     #     github.event.issue.milestone.title == 'GHA/trigger'
     #   )
-    if: >-
-      (
-        contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) ||
-        contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) ||
-        contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' )
-      ) && (
-        github.event.sender.login == 'andrzejnovak'
-      )
+    
     steps:
       - name: Dump GitHub context
         env:
