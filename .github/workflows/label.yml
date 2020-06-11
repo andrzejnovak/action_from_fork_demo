@@ -1,7 +1,7 @@
 name: labelrespond
 on:
   label:
-    types: [created, deleted, updated]
+    types: [created, deleted, edited]
 
 jobs:
   issuelabel:
