@@ -9,6 +9,7 @@ on:
 
 jobs:
   mintRelease:
+    runs-on: ubuntu-latest
     steps:
       - name: Dump GitHub context
         env:
