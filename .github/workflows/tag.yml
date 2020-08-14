@@ -52,12 +52,13 @@ jobs:
     - name: Checkout master
       run: git checkout master
     - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
-      if: github.event.action == 'labeled'
+      #if: github.event.action == 'labeled'
       run: |
         git fetch origin "pull/${PR_NUMBER}/head:PR${PR_NUMBER}"
         git merge --squash "PR${PR_NUMBER}"
         git commit -m "${PR_TITLE} (#${PR_NUMBER})"
         git status
+        git log --pretty=oneline --abbrev-commit |grep -v \|
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
@@ -89,6 +90,7 @@ jobs:
 
         git tag
         git status
+        git log --pretty=oneline --abbrev-commit |grep -v \|
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
