@@ -54,11 +54,10 @@ jobs:
     - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
       if: github.event.action == 'labeled'
       run: |
-        # git pull origin master
-        # git fetch origin "pull/${PR_NUMBER}/head:PR${PR_NUMBER}"
-        # git merge --squash "PR${PR_NUMBER}"
-        git merge --squash "origin/${GITHUB_HEAD_REF}"
+        git fetch origin "pull/${PR_NUMBER}/head:PR${PR_NUMBER}"
+        git merge --squash "PR${PR_NUMBER}"
         git commit -m "${PR_TITLE} (#${PR_NUMBER})"
+        git status
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
@@ -88,8 +87,8 @@ jobs:
         git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES_NEWLINE")"
         git tag -n99 -l $NEW_TAG
 
-        git branch
-        git diff origin master
+        git tag
+        git status
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
@@ -108,7 +107,8 @@ jobs:
         github.event.action == 'closed' && github.event.pull_request.merged
       uses: ad-m/github-push-action@v0.6.0
       with:
-        github_token: ${{ secrets.PAT_TEST }}
+        # github_token: ${{ secrets.PAT_TEST }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Comment that something failed
       if: failure()
       uses: actions/github-script@v1.1.0
