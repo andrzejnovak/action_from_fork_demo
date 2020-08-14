@@ -1,7 +1,7 @@
 # NB: release notes inspired by https://blogs.sap.com/2018/06/22/generating-release-notes-from-git-commit-messages-using-basic-shell-commands-gitgrep/
 name: Tag Creator
 on:
-  pull_request:
+  pull_request_target:
     types: [labeled, closed]
 env:
   IS_MAJOR: >-
@@ -21,7 +21,7 @@ jobs:
         contains( github.event.pull_request.labels.*.name, 'bumpversion/minor' ) ||
         contains( github.event.pull_request.labels.*.name, 'bumpversion/patch' )
       ) && (
-        github.event.sender.login == 'andrzejnovak'      
+        github.event.sender.login == 'andrzejnovak'
       )
     runs-on: ubuntu-latest
     steps:
@@ -54,6 +54,9 @@ jobs:
     - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
       if: github.event.action == 'labeled'
       run: |
+        # git pull origin master
+        # git fetch origin "pull/${PR_NUMBER}/head:PR${PR_NUMBER}"
+        # git merge --squash "PR${PR_NUMBER}"
         git merge --squash "origin/${GITHUB_HEAD_REF}"
         git commit -m "${PR_TITLE} (#${PR_NUMBER})"
     - name: Set up Python 3.7
@@ -74,6 +77,9 @@ jobs:
         echo "::set-env name=NEW_TAG::${NEW_TAG}"
         git tag -n99 -l $NEW_TAG
         CHANGES=$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):')
+        echo "CHANGES:"$CHANGES";"
+        if [ -z "${CHANGES// }" ]; then echo "CHANGES is empty, will substitute a dummy"; fi
+        if [ -z "${CHANGES// }" ]; then CHANGES="dummy: didn't find valid semantic labels"; fi
         CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
         SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' -e 's/"/'"'"'/g')
         echo "::set-env name=CHANGES::${SANITIZED_CHANGES//$'\n'/}"
@@ -81,6 +87,9 @@ jobs:
         echo "::set-env name=NUM_CHANGES::${NUM_CHANGES}"
         git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES_NEWLINE")"
         git tag -n99 -l $NEW_TAG
+
+        git branch
+        git diff
     - name: Comment on issue
       if: >-
         github.event.action == 'labeled'
