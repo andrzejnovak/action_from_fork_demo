@@ -1,0 +1,44 @@
+name: Commit and push random shit
+on:
+  workflow_dispatch:
+    inputs:
+      fname:
+        description: 'File name'
+        required: true
+        default: 'dummy'
+
+jobs:
+  mintRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Checkout repository
+        uses: actions/checkout@v2.2.0
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0
+      - name: Set up git user
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      - name: Checkout master
+        run: git checkout master
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Do stuff
+        run: |
+          touch ${ github.event.inputs.fname }
+          ls
+          git add ${ github.event.inputs.fname }
+          git commit -m "Add  ${ github.event.inputs.fname }"
+          
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_PAT }}
