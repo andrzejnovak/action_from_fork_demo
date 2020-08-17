@@ -50,15 +50,14 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
     - name: Checkout master
-      run: git checkout master
-    - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
-      #if: github.event.action == 'labeled'
       run: |
-        git fetch origin "pull/${PR_NUMBER}/head:PR${PR_NUMBER}"
-        git merge --squash "PR${PR_NUMBER}"
-        git commit -m "${PR_TITLE} (#${PR_NUMBER})"
-        git status
+        git checkout master
         git log --pretty=oneline --abbrev-commit |grep -v \|
+    - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
+      if: github.event.action == 'labeled'
+      run: |
+        git merge --squash "origin/${GITHUB_HEAD_REF}"
+        git commit -m "${PR_TITLE} (#${PR_NUMBER})"
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
@@ -109,7 +108,6 @@ jobs:
         github.event.action == 'closed' && github.event.pull_request.merged
       uses: ad-m/github-push-action@v0.6.0
       with:
-        # github_token: ${{ secrets.PAT_TEST }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Comment that something failed
       if: failure()
