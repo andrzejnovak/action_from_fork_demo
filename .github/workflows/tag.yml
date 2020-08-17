@@ -40,10 +40,6 @@ jobs:
         else
           echo "::set-env name=BV_PART::patch"
         fi
-    - name: Sleep for 10 seconds
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '10s'
     - name: Checkout repository
       uses: actions/checkout@v2.2.0
       with:
@@ -55,6 +51,7 @@ jobs:
         git config --local user.name "GitHub Action"
     - name: Checkout master
       run: |
+        git pull origin master
         git checkout master
         git log --pretty=oneline --abbrev-commit |grep -v \|
     - name: Squash and merge PR#${{ github.event.pull_request.number }} to master
