@@ -40,13 +40,18 @@ jobs:
       run: |
         python -m build
 
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+
     - name: Make files available as an artifact
       uses: actions/upload-artifact@v2
       with:
         path: dist/*
 
     - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'scikit-hep/mplhep'
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'andrzejnovak/action_from_fork_demo'
       uses: pypa/gh-action-pypi-publish@v1.3.1
       with:
         password: ${{ secrets.pypi_password }}
