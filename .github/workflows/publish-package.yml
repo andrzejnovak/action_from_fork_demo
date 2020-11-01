@@ -50,12 +50,12 @@ jobs:
       uses: pypa/gh-action-pypi-publish@v1.3.1
       with:
         password: ${{ secrets.pypi_password }}
-        repository_url: https://test.pypi.org/project/testing-gha-dummy
+        repository_url: https://test.pypi.org/project/testing-gha-dummy/
 
     - name: Publish distribution 📦 to PyPI when manually run
       if: github.event_name == 'workflow_dispatch'
       uses: pypa/gh-action-pypi-publish@v1.3.1
       with:
         password: ${{ secrets.pypi_password }}
-        repository_url: https://test.pypi.org/project/testing-gha-dummy
+        repository_url: https://test.pypi.org/project/testing-gha-dummy/
         
