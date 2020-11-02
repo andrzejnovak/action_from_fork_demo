@@ -1,4 +1,5 @@
 # NB: release notes inspired by https://blogs.sap.com/2018/06/22/generating-release-notes-from-git-commit-messages-using-basic-shell-commands-gitgrep/
+# Settings to configure manually are labelled as # CONFIG
 name: Tag Creator
 on:
   pull_request_target:
@@ -15,6 +16,7 @@ env:
   GITHUB_HEAD_REF: ${{ github.head_ref }}
 jobs:
   bumpversion:
+  # CONFIG - gh username
     if: >-
       (
         contains( github.event.pull_request.labels.*.name, 'bumpversion/major' ) ||
@@ -109,12 +111,13 @@ jobs:
         github.event.action == 'closed' && github.event.pull_request.merged
       uses: ad-m/github-push-action@v0.6.0
       with:
+        # CONFIG - gh PAT token that is added to secrets
         github_token: ${{ secrets.PAT_TEST }}
     - name: Comment that something failed
       if: failure()
       uses: actions/github-script@v1.1.0
       with:
-        github-token: ${{ secrets.PAT_TEST }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           github.issues.createComment({
               issue_number: context.issue.number,
