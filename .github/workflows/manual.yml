@@ -1,4 +1,5 @@
-name: Commit and push random shit
+# This workflow is only for testing purposes
+name: Create a dummy file, commit and push
 on:
   workflow_dispatch:
     inputs:

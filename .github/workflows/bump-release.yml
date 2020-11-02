@@ -1,4 +1,4 @@
-name: Mint a release
+name: Manual Tag Create
 on: 
   workflow_dispatch:
     inputs:
@@ -46,32 +46,42 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
       - name: Checkout master
-        run: git checkout master
-      - name: Set up Python 3.7
+        run: |
+          git pull origin master
+          git checkout master
+          git log --pretty=oneline --abbrev-commit |grep -v \|
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
-      - name: Install bumpversion
+          python-version: 3.8
+      - name: Install bump2version
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install bumpversion
-      - name: Run bumpversion ${{ env['BV_PART'] }}
+          python -m pip install "bump2version~=1.0"
+      - name: Run bump2version ${{ env['BV_PART'] }}
         run: |
           OLD_TAG=$(git describe --tags --abbrev=0)
-          echo "::set-env name=OLD_TAG::${OLD_TAG}"
-          bumpversion $BV_PART --message "Bump version: {current_version} → {new_version}
+          echo "OLD_TAG=${OLD_TAG}" >> $GITHUB_ENV
+          bump2version $BV_PART --message "Bump version: {current_version} → {new_version}
+
           Triggered by #${PR_NUMBER} via GitHub Actions."
           NEW_TAG=$(git describe --tags --abbrev=0)
-          echo "::set-env name=NEW_TAG::${NEW_TAG}"
+          echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_ENV
           git tag -n99 -l $NEW_TAG
+
           CHANGES=$(git log --pretty=format:'%s' $OLD_TAG..HEAD -i -E --grep='^([a-z]*?):')
+          echo "CHANGES:"$CHANGES";"
+          if [ -z "${CHANGES// }" ]; then echo "CHANGES is empty, will substitute a dummy"; fi
+          if [ -z "${CHANGES// }" ]; then CHANGES="dummy: didn't find valid semantic labels"; fi
           CHANGES_NEWLINE="$(echo "${CHANGES}" | sed -e 's/^/  - /')"
           SANITIZED_CHANGES=$(echo "${CHANGES}" | sed -e 's/^/<li>/' -e 's|$|</li>|' -e 's/(#[0-9]\+)//' -e 's/"/'"'"'/g')
-          echo "::set-env name=CHANGES::${SANITIZED_CHANGES//$'\n'/}"
+          echo "CHANGES=${SANITIZED_CHANGES//$'\n'/}" >> $GITHUB_ENV
           NUM_CHANGES=$(echo -n "$CHANGES" | grep -c '^')
-          echo "::set-env name=NUM_CHANGES::${NUM_CHANGES}"
+          echo "NUM_CHANGES=${NUM_CHANGES}" >> $GITHUB_ENV
           git tag $NEW_TAG $NEW_TAG^{} -f -m "$(printf "This is a $BV_PART release from $OLD_TAG → $NEW_TAG.\n\nChanges:\n$CHANGES_NEWLINE")"
           git tag -n99 -l $NEW_TAG
+          git status
+          git log --pretty=oneline --abbrev-commit |grep -v \|
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
